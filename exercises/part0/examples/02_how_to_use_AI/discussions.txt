@@ -1,0 +1,46 @@
+AI is rather inconsistent and non-deterministic
+
+What can we do with that being the case?
+
+1. Use AI more for ideas than the solutions
+
+Ideas have a far less risk than solutions. Solutions require more rigor than ideas
+
+We evaluate multiple ideas, reject a lot of them, consider a few of 
+them, and move towards devising solutions for any given problem. The 
+ideas may come from humans and also from AI.
+
+2. Consult with at least three AI models to get a consensus on the
+ideas and also to be able to get more ideas than one particular model
+may (inconsistently/unreliably) provide.
+
+Often many organizations chant "AI first" but I would like to kindly
+disagree and emphasis:
+
+"Human first (with time boxed effort) and AI second"
+
+Is AI first Garbage In, Garbage Out (GIGO) for the teams or companies you know?
+
+We as humans should first read, understand, and analyze a problem
+to a resonate extent. Don't take way too long, that is not the point.
+Please allot a time-boxed effort. This will help us to know enough,
+to think about it sufficiently, so when AI generates ideas or
+suggestions, we are able to immediately evaluate it rather than assume
+what AI creates is good.
+
+MM: AI can't read your thoughts. A draft for code or a text - even if they aren't so good - helps more than a short prompt in my experience.
+
+Even worse, we can't form our thoughts in one shot.
+Software exhibits the observer effect. The minute we create something 
+and take a look, we have better ideas on how to improve it.
+
+Be iterative in the use of AI. No doubt we are going to get better
+at it, but do not aim for a single shot, fastest way to ask AI to
+deliver the results.
+
+When starting at a problem:
+1. Humans first, take some time boxed effort to understand the problem, and reason about things. This will give us the much needed insight than rushing forward to using AI
+2. Use at least three different AI models to ask it for ideas
+3. Evaluate the ideas and form a union of thing that are relevant, discard things that seem a extraneous.
+
+
