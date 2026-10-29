@@ -1,0 +1,265 @@
+What are the characteristics we can think of?
+
+Human first:
+PN: Maintainability, Scalability, Elasticity,
+    Observability
+UV: uptime
+TJ: responsive
+VS: privacy, security
+VS: repudability (conflict resolution)
+KK: Reliability
+VS: Fault tolerance (what if a sensor goes does, what if network goes down)
+VS: interoperability with third party systems (DMV, Rental car companies, payment systems)
+
+
+Claude says:
+
+Here are the non-functional requirements (NFRs) I'd consider for this system, grouped by theme and tied back to the specifics of your scenario.
+
+## 1. Performance and Latency
+- **Real-time plate processing:** A plate read must be matched and charged (or queued for invoicing) quickly enough that nothing at the toll station depends on the result. The vehicle never stops, so the system must never block traffic. Charging can be asynchronous with a target such as "99% of known-plate charges initiated within 5 seconds."
+- **Portal responsiveness:** Page loads and account lookups should be under 2 seconds at the 95th percentile.
+- **Admin queries:** Travel history and pending-charge searches over years of data should return in seconds, even for broad date ranges.
+
+## 2. Scalability and Throughput
+- **Volume:** Statewide Texas traffic means millions of transactions per day, with strong peaks (rush hour, holidays, major events). Design for peak load plus a growth margin, and plan for horizontal scaling.
+- **Elasticity:** Capacity for billing cycles, invoice batch runs, and the user-portal spikes that follow invoices being mailed.
+- **20-year horizon:** Data volume will grow substantially. Storage, partitioning, and archival strategy must account for it.
+
+## 3. Availability and Reliability
+- **Toll stations must never lose data:** If the network or backend is down, stations need local buffering (store-and-forward) and must replay events once connectivity returns. Revenue loss from downtime is direct.
+- **High availability:** Very high uptime for the ingestion pipeline (e.g., 99.99%); somewhat lower for the portal and admin tools (e.g., 99.9%).
+- **Disaster recovery:** Defined RPO/RTO (near-zero RPO for transaction data), multi-region or multi-zone deployment, regular DR drills.
+- **Graceful degradation:** If the government records system or payment gateway is down, plate reads are queued and retried, not dropped.
+
+## 4. Data Integrity and Accuracy
+- **No lost or duplicate charges:** Idempotent processing so a replayed plate read never double-charges a card.
+- **Auditability:** Every charge, adjustment, refund, dispute action, and admin change has an immutable audit trail with who, what, and when.
+- **Rate correctness:** Toll rates change over time, so charges must be computed using the rate in effect at the time of passage (effective-dated rate tables).
+- **Plate-read accuracy:** OCR misreads happen. Track confidence scores, support manual review of low-confidence reads, and give disputes a way to reference the original image.
+- **Time synchronization:** Consistent, trustworthy timestamps across stations (NTP/GPS time), since they drive pricing and disputes.
+
+## 5. Security
+- **PCI DSS compliance:** Credit card handling must meet PCI requirements. Prefer tokenization via a payment provider so card numbers are never stored directly.
+- **Authentication and authorization:** Strong authentication for users (MFA option, account lockout, password policy), and role-based access control for administrators with least privilege.
+- **Encryption:** In transit (TLS) and at rest, including backups.
+- **Protection of government-sourced data:** Owner data from motor vehicle records is regulated (see the federal Driver's Privacy Protection Act and Texas rules). Restrict its use to billing, limit access, and log lookups.
+- **Station and sensor security:** Authenticated, tamper-resistant communication from field devices; physical and network hardening against spoofing or injection of fake reads.
+- **Fraud and abuse detection:** Monitoring for card testing, account takeover, and suspicious admin activity.
+- **Secure development practices:** Regular penetration testing, dependency scanning, secrets management.
+
+## 6. Privacy and Compliance
+- **Location and travel history is sensitive:** Define retention limits, access controls, and purposes for use. Consider law-enforcement request handling.
+- **Data retention and deletion:** Policies aligned with Texas records laws and contract terms, with legal-hold capability.
+- **Regulatory compliance:** PCI DSS, applicable state/federal privacy law, consumer-protection rules around invoicing and late fees, and accessibility law.
+- **Contractual/SLA reporting:** The state contract likely requires reporting on collections, uptime, and dispute resolution times.
+
+## 7. Integration and Interoperability
+- **External dependencies:** Payment processor, government vehicle-records system, mail/print vendor, SMS/email providers, and camera/sensor hardware. Each needs well-defined interfaces, timeouts, retries, circuit breakers, and fallbacks.
+- **Interoperability:** Possible tolling agreements with other states or agencies, so use standards where they exist.
+- **Loose coupling:** Wrap vendors behind abstraction layers so a payment provider or mail vendor can be swapped over 20 years.
+
+## 8. Maintainability and Evolvability
+- **20-year lifespan:** Technology will change. Favor modular architecture, clear APIs, and avoiding vendor lock-in.
+- **Configurability:** Toll rates, notification templates, retry policies, and invoice rules should be configuration or data, not code changes.
+- **Upgradeability without downtime:** Rolling deployments, backward-compatible schema migrations, feature flags.
+- **Documentation and knowledge transfer:** Essential given team turnover over two decades.
+- **Hardware lifecycle:** Cameras and sensors will be replaced, so the ingestion interface should be device-agnostic.
+
+## 9. Observability and Operability
+- **Monitoring and alerting:** Per-station health, read success rates, charge failure rates, queue depths, and revenue anomalies (e.g., a station reporting zero traffic).
+- **Logging and tracing:** Correlation IDs from plate read through charge to invoice.
+- **Reconciliation:** Automated daily reconciliation between plate reads, charges, payments, and bank settlements.
+- **Operational runbooks and support tooling:** Admin tools to retry, reprocess, or correct failed items.
+
+## 10. Usability and Accessibility
+- **Accessibility:** WCAG 2.1 AA for the web portal, which is typically required for government-related services.
+- **Multi-channel and multilingual:** Texas has a large Spanish-speaking population, so support Spanish for the portal, invoices, and notifications.
+- **Mobile-friendly:** Many users will check charges and pay from phones.
+- **Clear invoices and notifications:** Plain language, with enough detail (date, location, amount, plate, image reference) to reduce disputes and support calls.
+- **Self-service:** Reduce call-center load through easy dispute filing and payment.
+
+## 11. Testability
+- **Simulation:** Ability to replay or simulate plate-read traffic at scale for load testing.
+- **Environments:** Sandbox integrations for payment and government systems.
+- **Automated regression testing** covering billing logic, especially rate changes and edge cases (midnight rate changes, daylight saving time, duplicate reads).
+
+## 12. Cost and Efficiency
+- **Cost per transaction:** At millions of transactions per day, small per-transaction costs (card processing fees, mailing costs, cloud costs) add up. Consider batching micro-charges, and set targets for cost of collection.
+- **Invoice economics:** Mailing a paper invoice costs more than some tolls, so aggregate charges per invoice period and offer electronic delivery.
+
+## 13. Business Continuity and Contractual Concerns
+- **Data ownership and transition:** The contract has a 20-year term, so plan for data export and handover at the end or in a vendor transition.
+- **Time-bound legal processes:** Invoice due dates, late-fee rules, and dispute windows must be enforced consistently.
+
+---
+
+## Which ones matter most?
+If I had to pick the "architecturally significant" characteristics that will most shape design decisions, they are:
+1. **Availability/resilience** (never lose a plate read, never block traffic)
+2. **Data integrity and auditability** (exactly-once charging, correct rates, dispute defense)
+3. **Security and compliance** (PCI, DPPA, location privacy)
+4. **Scalability** (statewide peaks, 20 years of growth)
+5. **Evolvability** (20-year lifespan, swappable integrations, configurable rates)
+
+If you'd like, I can turn this into a prioritized table with measurable targets (e.g., specific SLOs) or map each characteristic to architectural tactics.
+
+
+We identified some characteristic, we asked AI for its input, but...
+
+should we be identifying characteristic for this entire
+application or should we really think about the different
+applications that make up this large application. The characteristic of the billing system, after all, are different from the characteristic of the license plate identification system, isn't it?
+
+So, let us ask AI to set them apart:
+
+
+If we were to look at this as two systems, one for the billing and the other for license plate identification. Can you list the characteristics for these two different systems separately?
+
+
+Splitting the system this way makes sense because the two halves have very different profiles. The plate identification system is a real-time, edge-heavy, high-volume pipeline. The billing system is a transactional, financial, user-facing system of record.
+
+**Boundary assumed:** Plate identification owns everything from the camera to a validated, durable *plate read event* (plate, station, timestamp, confidence, image reference). Billing consumes those events and owns accounts, rates, charging, invoicing, the portal, admin tools, and disputes.
+
+---
+
+# System 1: License Plate Identification
+
+## Performance
+- **Capture and recognition under real-world speed:** Reliable reads at highway speeds, day and night, in rain, glare, fog, and dust, across Texas plate designs and out-of-state plates.
+- **Edge latency:** Recognition at the station within a fraction of a second so each vehicle is tied to exactly one event.
+- **Throughput per station:** Handle peak multi-lane traffic without dropped frames.
+
+## Accuracy
+- **Read accuracy targets:** For example, 99%+ automatic read rate, with a very low misread rate. A misread is worse than a no-read because it can charge the wrong person.
+- **Confidence scoring:** Every read carries a confidence value, and low-confidence reads route to manual or secondary review.
+- **Vehicle-to-event correctness:** Avoid duplicate events for the same vehicle (multiple cameras, stop-and-go traffic) and missed vehicles (tailgating, occlusion).
+- **Evidence retention:** Store the image so the read can be verified in a dispute.
+
+## Availability and Resilience
+- **Station autonomy:** Stations keep capturing and buffering locally when the network is down (store-and-forward), with enough local storage for an extended outage.
+- **No traffic impact:** Failure of any backend component must never affect traffic flow.
+- **Redundancy at the edge:** Redundant cameras or lanes where practical, plus power backup.
+- **Reliable delivery:** At-least-once delivery from station to central ingestion, with deduplication downstream.
+
+## Data Integrity
+- **Trusted timestamps:** GPS/NTP-synced clocks, since time drives rate selection and disputes.
+- **Event immutability:** Raw reads are never altered. Corrections are new, linked records.
+- **Unique event IDs:** Generated at the edge, so replays are idempotent.
+
+## Security
+- **Device identity and authentication:** Each station and sensor is authenticated, with certificates rotated automatically.
+- **Tamper resistance:** Physical tamper detection, signed or encrypted payloads, and protection against spoofed or injected reads.
+- **Network hardening:** Isolated network segments for field devices, patchable remotely and securely.
+- **Image and location data protection:** Encryption in transit and at rest.
+
+## Maintainability and Hardware Lifecycle
+- **Remote management:** Firmware, model, and configuration updates pushed remotely with staged rollouts and rollback.
+- **Hardware independence:** A device-agnostic event format so cameras can be replaced over 20 years without touching billing.
+- **Model updates:** Ability to retrain or replace the recognition model, and to re-run recognition on stored images.
+- **Field serviceability:** Minimize truck rolls with diagnostics, health reporting, and spare-part standardization.
+
+## Observability
+- **Per-station health:** Read rate, confidence distribution, camera cleanliness or obstruction, clock drift, and storage and buffer depth.
+- **Anomaly detection:** Alert on a station reporting zero reads, a sudden drop in confidence, or a stuck camera.
+
+## Scalability
+- **Fleet growth:** Add stations and lanes without redesign.
+- **Central ingestion scale:** Absorb bursts, including the surge when many stations flush buffers after an outage.
+- **Image storage growth:** Tiered storage with retention rules, since images dominate data volume.
+
+## Privacy and Compliance
+- **Location tracking sensitivity:** Every read is a data point about someone's movement. Define retention, access, and purpose limits.
+- **Retention of non-account reads:** Decide how long to keep reads for vehicles that turn out to have no billable event, and for images.
+- **Law-enforcement and records requests:** Defined, audited handling.
+
+---
+
+# System 2: Billing
+
+## Data Integrity and Financial Correctness
+- **Exactly-once effect:** Idempotent charging so replays or retries never double-charge a card.
+- **Effective-dated rates:** Charge using the rate in effect at the time of passage, even if the event arrives days later.
+- **Reconciliation:** Automated daily reconciliation of events, charges, payments, and bank settlements. Unreconciled items are surfaced, not ignored.
+- **Immutable ledger and audit trail:** Charges, adjustments, refunds, and admin actions are append-only, with who, what, and when.
+- **Rounding and money handling:** Decimal-safe money types and consistent rounding rules.
+
+## Security
+- **PCI DSS compliance:** Tokenize cards through a payment provider, and minimize PCI scope.
+- **Authentication and authorization:** MFA option for users, account lockout, role-based access with least privilege for admins, and separation of duties (for example, the person who posts payments is not the one who approves adjustments).
+- **Protection of government-sourced owner data:** Use limited to billing, access restricted, and lookups logged (Driver's Privacy Protection Act and Texas rules).
+- **Fraud and abuse detection:** Card testing, account takeover, and suspicious admin activity.
+- **Encryption everywhere:** In transit, at rest, and in backups.
+
+## Availability and Reliability
+- **Tiered availability targets:** Highest for charge processing, somewhat lower for the portal and admin tools.
+- **Resilience to dependency failure:** The payment gateway, government records system, and notification providers will fail. Use queues, retries with backoff, circuit breakers, and dead-letter handling so nothing is lost.
+- **Disaster recovery:** Near-zero RPO for financial data, with a defined RTO and tested failover.
+- **Safe batch operations:** Invoice runs and retries are restartable and resumable.
+
+## Performance and Scalability
+- **Asynchronous charging:** Known-plate charges initiated within seconds of the event, with a clear SLO.
+- **Portal responsiveness:** Account and charge lookups at roughly 2 seconds or less at the 95th percentile.
+- **Peak handling:** Spikes after invoices are mailed, at payment due dates, and during rate changes.
+- **Query performance over history:** Admin travel-history and charge searches stay fast across years of data, using partitioning and archival.
+
+## Integration
+- **Payment processor:** Abstraction layer so providers can be swapped, plus support for retries and settlement files.
+- **Government records interface:** Handling of slow responses, batch lookups, caching rules permitted by law, and unmatched or ambiguous owners.
+- **Notification and mail vendors:** Delivery status tracking, bounce handling, and print-and-mail SLAs.
+- **Interstate and agency interoperability:** Possible reciprocity agreements.
+
+## Usability and Accessibility
+- **WCAG 2.1 AA** for the portal, plus mobile-friendly design.
+- **Spanish and other language support** for the portal, invoices, and notifications.
+- **Clear invoices and receipts:** Date, location, amount, plate, and an image reference, to reduce disputes.
+- **Self-service:** Easy payment, profile updates, and dispute filing.
+
+## Maintainability and Evolvability
+- **Configuration over code:** Rates, fees, notification templates, retry rules, invoice cycles, and dispute windows are data-driven.
+- **Zero-downtime changes:** Backward-compatible schema migrations and feature flags.
+- **Business rule changes:** Legislation, contract amendments, and fee changes are expected over 20 years.
+- **Documentation and testability:** Strong regression coverage for billing logic, including midnight rate changes, daylight saving time, and duplicate events.
+
+## Observability and Operability
+- **Business metrics:** Charge success and failure rates, invoice aging, collections, and revenue per station, with anomaly alerts.
+- **Tracing:** A correlation ID from plate event to charge to invoice to payment.
+- **Admin tooling:** Retry, reprocess, adjust, and write-off with proper approvals.
+
+## Compliance and Legal
+- **Data retention and legal hold:** Retention schedules for financial records and disputes.
+- **Consumer protection:** Rules around invoicing, late fees, and notice timing.
+- **Contract reporting:** Collections, aging, and dispute-resolution metrics for the state.
+- **Cost efficiency:** Aggregate small charges to reduce card fees and mailing costs per transaction.
+
+---
+
+# The Interface Between the Two
+
+The contract between these systems deserves its own NFRs, because most cross-system failures happen here.
+
+- **Delivery guarantee:** At-least-once from identification to billing, with idempotent consumption on the billing side.
+- **Event schema versioning:** Backward compatibility so each system can evolve independently.
+- **Backpressure and buffering:** Billing slowness or outage must never cause plate events to be dropped. A durable queue or log sits between them.
+- **Reprocessing:** Billing can request re-recognition or the original image for a disputed event, and corrected reads flow back as new events.
+- **Lag monitoring:** End-to-end event age is tracked and alerted on.
+- **Data minimization:** Billing receives only what it needs, and image access is controlled and audited.
+
+---
+
+# How the Priorities Differ
+
+| Characteristic | Plate Identification | Billing |
+|---|---|---|
+| **Top concern** | Accuracy and edge resilience | Financial correctness and auditability |
+| **Availability** | Never lose or block a read (edge autonomy) | Never lose a charge (durable queues, DR) |
+| **Latency** | Sub-second at the station | Seconds for charging, ~2 sec for the portal |
+| **Scalability driver** | Number of stations, traffic bursts, image storage | Transaction history, billing cycles, portal spikes |
+| **Security focus** | Device identity, tamper resistance, spoofing | PCI, access control, fraud, owner-data protection |
+| **Change driver** | Hardware and model lifecycle | Rates, laws, contract, and vendor changes |
+| **Privacy focus** | Movement and location data, images | Owner PII, payment data, travel history |
+| **Key risk** | Misread leading to a wrong charge | Double charge or lost revenue |
+
+The two halves also evolve at different speeds. Cameras and models change on a hardware refresh cycle, while billing rules change with laws and contracts. That is a strong argument for keeping them as separate deployable systems with a well-defined, versioned event contract.
+
+If it would help, I can sketch the architecture that falls out of these differences, or write measurable targets (SLOs) for each system.
