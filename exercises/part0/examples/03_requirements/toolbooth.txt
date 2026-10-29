@@ -1,0 +1,9 @@
+A company has won a contract to maintain tollbooths in the entire state of Texas for the next 20 years. They want to build a system that will charge tolls. The system will support two kinds of users: Those who have registered with the system by providing their vehicle license numbers and credit card details and those who have not.
+
+When a vehicle drives by a toll station, a camera sensor will read the license plate of the vehicle. Different toll stations will have different amount to charge. The amount may change over time.
+
+If a license plate number is known, then the system immediately charges the credit card on the account. If the number is not known, then the system will communicate with the government records system to get information of the owner of the vehicle. It will then send out an invoice, by mail, to the owner for the charges. If the number was known but there was an error charging the credit card, then the system will communicate via text or email, to the registered user.
+
+A user can logon to the system and review their toll charges, date, location, amount, and so on. They can also make payments, change their information like address, credit card, contact information, and so on.
+
+Administrators can look up pending charges, post payments, dig up travel history, handle disputes, and so on.
