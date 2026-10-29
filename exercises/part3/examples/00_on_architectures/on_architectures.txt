@@ -1,0 +1,73 @@
+Monoliths are distributed so then what is the difference
+between monoliths and distributed architecture?
+
+Monoliths are about having a single unit of deployment whereas
+distributed architectures have multiple units of deployment.
+
+Knowing what characteristic are handled better by an architecture can
+help us decide if that architecture is suitable for a requirement for
+which we have taken the time to figure out the characteristic.
+
+In the case of monoliths, all the distributed parts have to be 
+updated together. In a distributed architecture, the different 
+distributed parts may be updated independent of other distributed parts.
+
+Client-Server architecture
+ Characteristics
+ Simple
+ Less expensive to build
+ Suffers on testability, scalability, modularity,...
+
+Microkernel architecture we have a core and many plugins that
+perform different operations and interoperate with the code via
+a well established interface. The plugins may be domain specific
+or technology specific.
+ Characteristics
+ Simple
+ Less expensive to build
+ Modular
+ Testable
+ Suffer on scalability
+
+Event driven architecture is often confused with CQRS (Command Query Separation). Separation of reads from the writes. Useful where
+we have high frequency high volume reads and infrequent writes.
+
+This event driven is more of a functional pipeline than CQRS.
+ Simple
+ scalability (it can run the functions in the pipeline in parallel)
+ Suffers on testability, modularity,
+
+Distributed architectures
+  Space Based architecture
+    We have services that are split and they may often share one or
+    more databases.
+
+    If it easier, relatively speaking, to split code or to split the
+    database?
+
+    TJ, RR: Code
+
+    Service based architecture gives us most of the benefits of 
+    microservices but at a lower cost and higher simplicity
+
+    Scalable
+    Modular
+    Simple (compared to microservices)
+    testable
+
+  Microservices
+    We have bounded context and separation of both services and the
+    data used by services.
+    We use distributed data model rather than a universal data model
+
+    Scalable
+    Modular
+    Testable
+    Suffers on cost, simplicity and needs more monitoring and observing
+
+Billing system
+
+
+Plate Identification System
+
+
