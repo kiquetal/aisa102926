@@ -1,0 +1,10 @@
+We want to develop a software that will help the tax payers to file their annual tax returns. The system will be used by individual tax payers who live in various states in the US. The software will support both English and Spanish. It will help users file both their federal tax return and also their state tax return. It is quite possible that a user may have to file tax return in multiple states since they may have earned in multiple states.
+
+A user may be able to file their individual tax return, a joint family return, or file a tax as a dependent. A user may file tax return for different members of their family.
+
+The application will take care of communicating with the tax authorities of states and federal government, in order to file the tax return, and will update the user, via email and/or messaging about their tax return status.
+
+The application will collect sensitive bank details from the user and transmit it to the necessary authorities. Also, the system will collect filing fees from users, as part of using the tax software.
+
+Let's examine the requirements to see if there are any critical details missing. Let's then ask AI for the same and ask it for any risks we should consider as well.
+
