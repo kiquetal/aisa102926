@@ -1,0 +1,50 @@
+What is architecture?
+
+It is the structure and interconnection of components and how they
+communicate to solve the problem at hand.
+
+But, isn't that part of design as well?
+
+Architecture is a very high level design where the decisions have
+a very high impact and cost compared to design decisions.
+
+A good architecture is not the one that correctly predicts the future
+but make adapting to the future needs more economical and affordable.
+
+Functional requirements:
+  A user may access their toll/travel records
+
+Non-functional requirements:
+  Things we tend to think are not significant and the word "non"
+  sadly does not help either.
+
+  These are expectations, constraints, and challenges that a system
+  should be able to meet.
+
+  At a given time, 10,000 users may need information about their
+  travel / toll charges
+
+These are often the ities in systems and a better name may be
+characteristically.
+
+Security
+Scalability
+Accessibility
+...
+Performance
+...
+
+
+Why not go from a problem to the architectural solution directly?
+
+1. We may not really know of all the essential details, constraints
+that we need to meet at that level of the problem.
+2. 
+
+Whereas functional requirements are very important, it is the
+characteristics that have a greater impact on the architecture.
+
+We can create an architecture from the functional requirements but
+that is not often effective. Considering the characteristics leads
+to a better and relevant architecture for the problem.
+
