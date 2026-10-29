@@ -1,0 +1,66 @@
+Prioritizing the Characteristics for
+
+Billing system
+
++Scalability
++Compliance and Legal
++Data Integrity and Financial Correctness
++Integration
++Security and Privacy
++Accessibility
++Evolvability
++Observability
++Operability
+~Availability
+~Reliability
+~Usability
+~Maintainability
+-Performance
+
+
+Claude:
+
+This is a prioritization question I can answer directly. The ranking below is for the **Billing system** specifically, which is where the money, legal exposure, and customer trust concentrate.
+
+## Priority Order (highest to lowest)
+
+1. **Data Integrity and Financial Correctness**: The system's core job is charging the right amount to the right vehicle exactly once. Duplicate charges, missed charges, wrong rates, or lost transactions cause direct financial loss and disputes. Idempotent charging, an immutable audit trail, and rate versioning (toll amounts change over time) all belong here.
+
+2. **Security and Privacy**: The system holds credit card data, license plates, home addresses, and travel history, which together form a detailed record of where people go. A breach is catastrophic, and a 20-year contract means a long attack window.
+
+3. **Compliance and Legal**: PCI-DSS for card data, Texas and federal privacy law, rules on the use of government (DMV) records, invoice and dispute requirements, and records retention. Non-compliance can cost the contract itself, so this ranks just below security and is closely tied to it.
+
+4. **Reliability**: Charges must be processed correctly even when components fail. Plate reads must not be lost, card-charge failures must trigger notifications, and retries must be safe. Billing should degrade gracefully (queue and process later) instead of dropping events.
+
+5. **Availability**: Toll stations keep operating whether or not billing is up, so a brief outage doesn't stop traffic. Events can be buffered and billed later. This lowers its priority relative to reliability. Availability matters most for event ingestion and less for the user portal.
+
+6. **Integration**: Billing depends on toll-station sensors, payment processors, the government records system, and mail/text/email providers. Failures at these boundaries directly affect revenue, so integration quality is a major driver of correctness.
+
+7. **Scalability**: Statewide traffic means high volume with rush-hour peaks and growth over 20 years. This is important, but billing is mostly asynchronous and can be handled with queues and horizontal scaling.
+
+8. **Observability**: You need to detect missed charges, reconciliation gaps, failing payment gateways, and anomalies quickly. This protects revenue and supports dispute resolution.
+
+9. **Performance**: Charging "immediately" doesn't require millisecond latency, because the vehicle is already past the booth. Reasonable throughput and portal responsiveness are enough.
+
+10. **Maintainability**: A 20-year horizon makes this significant, but it protects long-term cost rather than immediate correctness.
+
+11. **Evolvability**: Rates, payment methods, regulations, and technologies will change (new tolling policies, new payment types). The design should accommodate this, but it can be addressed through modular boundaries rather than up-front effort.
+
+12. **Operability**: Deployment, monitoring runbooks, and admin tooling for pending charges and disputes. Important for day-to-day running, but it follows from the items above.
+
+13. **Usability**: Account review, payments, and profile edits should be straightforward, since poor usability mostly drives support costs and disputes.
+
+14. **Accessibility**: Ranked last only relative to the others. It is often a legal requirement (ADA, Section 508), which is why it sits at the end of the list rather than being dropped, and why it is ranked above nothing that would put the contract at risk.
+
+## Rationale for the key judgment calls
+
+- **Security above Compliance**: Compliance requirements largely define the minimum security bar, but real security goes beyond the checklist.
+- **Reliability above Availability**: A system that is briefly down but never wrong or lossy is far better for billing than one that is always up but sometimes charges incorrectly.
+- **Integration ranked high (6th)**: Unlike many systems, this one's value depends on external parties (DMV, card processors, sensors), so integration failures translate directly into lost revenue.
+- **Performance ranked low**: Billing is not latency-sensitive in the way an interactive application is.
+
+Priorities could shift if the contract has strict SLAs, for example if availability penalties were severe, in which case Availability could move up a few positions.
+
+
+Plate Identification system
+
