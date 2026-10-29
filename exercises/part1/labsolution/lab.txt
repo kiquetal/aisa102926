@@ -1,0 +1,118 @@
+For the problem from the previous part, let us identify the characteristics.
+
+Then let us ask AI to identify the characteristics.
+
+Characteristics:
+VK: Security
+VS: privacy
+VS: correctness
+VS: Interoperability
+VS: availability
+VS: Scalability
+LA: Resilience
+RR: Data integrity
+VS: upgradability
+VS: Accessibility
+VS: Localization
+RR: maintainability
+MH: Compliant
+JM: Usability
+JM: Error tolerance
+Auditability, traceability
+
+
+performance?
+
+Claude:
+
+# Non-Functional Requirements for the Tax Filing Application
+
+## 1. Security
+- **Encryption:** TLS 1.2+ for data in transit. AES-256 at rest for PII (SSN/ITIN, income, bank account and routing numbers), with keys in an HSM or KMS and rotated regularly. Consider field-level encryption or tokenization for SSNs and bank details.
+- **Authentication and authorization:** MFA, strong password policy, and device/session management. Use role-based access control so support staff see only what they need, with masked data and just-in-time access.
+- **Identity proofing and fraud prevention:** Identity verification, anomaly and fraud detection, and protection against account takeover and refund fraud. The IRS requires e-file providers to meet specific standards here.
+- **Secure development:** OWASP Top 10 protections, dependency scanning, regular penetration tests, secrets management, and protection against injection, XSS, and CSRF.
+- **Payment security:** Use a PCI DSS-compliant payment processor so card data never touches your systems.
+
+## 2. Privacy and Regulatory Compliance
+- **Federal:** IRS e-file provider requirements (Pub. 1345, Pub. 4557), the FTC Safeguards Rule and GLBA (including a written information security plan), and IRC §7216 (restrictions on using or disclosing tax return information).
+- **State:** Each state's e-file and security requirements, plus state privacy laws (e.g., CCPA/CPRA).
+- **Financial:** NACHA rules for ACH if you handle bank transfers or debit fees.
+- **Consent and data rights:** Explicit consent for data use, sharing, and notifications, with the ability to export and delete data subject to legal retention rules.
+- **Data minimization:** Collect and retain only what is needed.
+- **Minors and dependents:** Rules for filing on behalf of family members and dependents, including authorization and consent.
+- **Data residency:** Store and process data in the US.
+
+## 3. Availability and Resilience
+- **Seasonal peaks:** Traffic spikes sharply around the filing deadlines (mid-April, and mid-October for extensions). Target very high availability (e.g., 99.9%+), with the strictest targets in January–April.
+- **Disaster recovery:** Defined RPO and RTO (e.g., RPO near zero for submitted returns), multi-AZ or multi-region deployment, and tested backups.
+- **Graceful degradation:** Users can keep entering data if a government gateway is down. Queue submissions and retry them.
+- **Maintenance windows:** Schedule outside peak periods.
+
+## 4. Scalability and Performance
+- **Elastic scaling:** Auto-scale for 10–50x seasonal load, with load testing before each season.
+- **Responsiveness:** Page loads under about 2–3 seconds, and tax calculations that feel instantaneous (e.g., under 1 second).
+- **Asynchronous processing:** Submission, document processing, and notifications run through queues so users are never blocked.
+
+## 5. Accuracy, Data Integrity, and Correctness
+- **Calculation accuracy:** Federal and state calculations must match the official rules exactly, validated with test suites such as the IRS's ATS (Assurance Testing System) scenarios.
+- **Validation:** Real-time checks against IRS and state business rules and schemas to minimize rejections.
+- **Idempotent submissions:** Prevent duplicate filings or double charges, with transactional consistency across multi-state returns.
+- **Immutable snapshots:** Keep what was submitted, when, and by whom.
+
+## 6. Interoperability and Integration
+- **Government interfaces:** Federal MeF (Modernized e-File) and each state's own e-file interface, which differ in formats, validation rules, and availability. Design an adapter or plugin architecture per state.
+- **Third parties:** Payment gateways, email/SMS providers, identity verification, and possibly bank-linking or document-import services such as W-2 import.
+- **Versioned contracts:** Isolate integrations so changes by one authority don't ripple through the system.
+
+## 7. Maintainability and Adaptability
+- **Annual tax-law changes:** Tax rules, forms, and schemas change every year, and states change independently. Use a rules engine or data-driven configuration rather than hard-coded logic, with versioning per tax year.
+- **Modularity:** Federal and state modules separately deployable and testable.
+- **Multi-year support:** Amended and prior-year returns, and viewing past years' returns.
+- **Observability:** Centralized logging, metrics, tracing, and alerting.
+
+## 8. Usability, Accessibility, and Localization
+- **Localization (English and Spanish):** All UI, help content, notifications, and generated documents. Use accurate tax terminology, and consider regional wording, number and date formats, and the extensibility to add more languages.
+- **Accessibility:** WCAG 2.1/2.2 AA and Section 508 compliance, including screen readers and keyboard navigation.
+- **Simplicity:** Guided, interview-style flows suited to non-experts, with progress save and resume, and plain-language explanations.
+- **Multi-device:** Responsive design and support for current browsers and mobile devices.
+- **Multi-person flows:** Clear handling of individual, joint, dependent, and family-member filings, including delegated access and multi-state workflows.
+
+## 9. Auditability and Traceability
+- **Audit trails:** Immutable logs of user actions, submissions, data access, and administrative actions.
+- **Status traceability:** End-to-end tracking of each return through submitted, accepted, rejected, and refund stages, with acknowledgments stored.
+- **Compliance evidence:** Support for regulatory audits and dispute resolution.
+
+## 10. Reliability of Notifications
+- **Delivery guarantees:** Reliable, at-least-once delivery of status updates with deduplication, retries, and delivery tracking.
+- **Preferences and consent:** Opt-in/opt-out for email and SMS, with compliance with anti-spam rules such as CAN-SPAM and TCPA.
+- **Security of content:** Notifications must not expose sensitive data such as SSNs or full account numbers.
+- **Localized messages:** Delivered in the user's chosen language.
+
+## 11. Data Management and Retention
+- **Retention and deletion:** Keep returns and supporting records for the legally required period (typically 3–7 years), then securely purge.
+- **Backup security:** Encrypted backups with the same access controls as production.
+- **Data lineage:** Know where each piece of user data came from and where it was sent.
+
+## 12. Testability and Quality Assurance
+- **Automated testing:** Unit, integration, regression, and end-to-end tests across tax scenarios (including multi-state), plus sandbox/test environments connected to IRS and state test endpoints.
+- **Seasonal readiness:** Pre-season validation, performance testing, and rollback plans.
+
+## 13. Operational and Business Constraints
+- **Support:** Bilingual customer support tooling with safe, audited access to user data.
+- **Cost efficiency:** Elastic infrastructure that scales down off-season.
+- **Legal and licensing:** Authorized e-file provider status, state registrations, and clear terms of use and disclaimers.
+
+---
+
+### Likely Top Priorities
+Given the nature of this system, I'd treat these as the most critical:
+1. **Security and privacy** (SSNs and bank details are high-value targets)
+2. **Regulatory compliance** (IRS, state, and financial rules)
+3. **Accuracy and correctness** of calculations and filings
+4. **Availability and scalability** during peak filing periods
+5. **Adaptability** to annual changes across federal and many state systems
+6. **Localization and accessibility**
+
+I can turn these into measurable targets (e.g., specific SLAs, RPO/RTO, latency budgets) or into a requirements document if that would help.
+
