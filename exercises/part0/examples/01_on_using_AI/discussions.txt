@@ -1,0 +1,62 @@
+We are living in such an interesting time
+
+AI is expressly powerful
+
+At the same time, do not forget that AI is largely inconsistent
+
+AI *is* non-deterministic
+
+It will not give us the correct or the same result each time we ask.
+
+Do not trust AI as it is unreliable.
+
+The old norm: Trust but verify
+The new norm: Don't trust and verify the heck out of it
+
+If you deliver something that is AI generated, who is responsible for 
+what we deliver?
+SK: humans
+MM: Me
+JM: Project owner
+PE: We are humans are responsible
+SS: whichever entity the responbility is assigned
+PM: me
+IE: we
+SA: we are
+AG: individual who asked AI to generate
+AS: Humans are responsible but model capability also matters
+JM: We didnt reach to that level to fully trust the AI generated outout. (IIn other words, we have not created that much intelligence)
+SS: it's also about risk management.. sometimes, risk can be transferred to end consumers... depending on the scenario
+SK: Why do we even ask this question, AI is a software , may be a bit different but end of the day , it is a software . We own software , so same with AI
+
+We can delegate our tasks to AI, but we can't delegate our responsibilities and reputation to AI
+
+If we do not have the fundamentals, we are at very high risk of using
+what AI generates even when it may not be correct, good, or adequate.
+
+
+Is AI intelligent?
+
+AI is Accelerated Inference, it is an expressly fast pattern matching 
+engine
+
+inference != intelligence
+
+AI is a tool. Much like any tool, we have to evaluate when the tool
+is the right fit.
+
+It is even more important that we have the fundamentals and continue
+to develop our critical thinking
+
+MM: A fool with a tool is still a fool
+My good old boss: "A fool with a tool is a dangerous fool"
+
+The illiterate of today is not the one who can't read, but the
+one that can't think critically.
+
+We need the ability to use the tool and be able to guide the tool
+towards getting us the right results, as the tool is not going to
+do that by itself.
+
+
+
