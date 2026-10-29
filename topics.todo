@@ -1,0 +1,65 @@
+AI-Guided System Design and Software Architecture
+Venkat Subramaniam
+Email: venkats@agiledeveloper.com
+LinkedIn: https://www.linkedin.com/in/vsubramaniam
+Twitter/X: @venkat_s
+Mastodon: https://mastodon.social/@venkats
+Bluesky: https://bsky.app/profile/venkats.bsky.social
+
+Part 0: Analyzing requirements with AI:
+✔Requirements
+✔Details in documents
+✔Filling in the gap
+✔How can AI help?
+✔Exercise
+
+Part 1: Identifying characteristics:
+✔What is Architecture?
+✔What is a good architecture?
+✔Functional requirements
+✔Non functional requirements
+✔Human first approach rather than AI first approach
+✔Humam-AI Collaboration to identify characteristics
+✔Let's identify characteristics first
+✔Exercise
+✔Let's bring in AI to identify characteristics next
+✔Exercise
+
+Part 2: Prioritizing Characteristics:
+✔Let's bring them all together
+✔Let's prioritize
+✔Let's ask AI to prioritize
+✔Let's rework the prioritization
+✔Exercise
+
+Part 3: Identify solutions from requirements and characteristics:
+✔Let's think of the architecture styles that may be suitable
+  ✔monoliths
+   ✔client-server
+   ✔micro-kernel architecture
+   ✔event driven architecture
+  ✔distributed architectures
+   ✔service based architecture
+   ✔microservices
+   ✔service-oriented architecture
+
+
+   What should be the architecture for the tax software?
+
+-Benefits and challenges of using AI for this step
+  If you ask AI what architecture we should use, what may be the likely answer?
+
+    AI is an inference engine. It most likely will go towards what is popular.
+-Let's ask AI to assist us
+-Evaluating the recommendations
+-Exercise
+
+Discussions:
+-discussions
+
+AI is very powerful, but we need to have enough knowledge about 
+the problem and the fundamentals to be able to engage in a 
+conversation with AI, to seer it in the right direction, and
+get the most out of it.
+
+
